@@ -23,3 +23,5 @@ class MessageTest(TestCase):
         message = Message.objects.create(text='test', pub_date='2020-01-01T00:00:00Z', client=client,
                                          mail_send=mail_send)
         self.assertEqual(str(message), f"#{message.id} Message {message.text} to {message.client}")
+
+

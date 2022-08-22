@@ -34,7 +34,7 @@ class Client(models.Model):
     phone_validator = RegexValidator(regex=r'^\d{10}$', message="Phone must be in format: '7XXXXXXXXXX'.")
 
     phone = models.CharField(max_length=11, unique=True, validators=[phone_validator])
-    mobile_code = models.CharField(max_length=3)
+    mobile_code = models.CharField(max_length=3, editable=False)
     tag = models.CharField(max_length=100)
 
     TIMEZONE_CHOICES = zip(pytz.all_timezones, pytz.all_timezones)
@@ -43,19 +43,25 @@ class Client(models.Model):
     def __str__(self):
         return f"#{self.id} Client {self.mobile_code} {self.phone}"
 
+    def save(self, *args, **kwargs):
+        self.mobile_code = self.phone[:3]
+        super(Client, self).save(*args, **kwargs)
+
 
 class Message(models.Model):
     """
     Сущность "сообщение" имеет атрибуты:
     -уникальный id сообщения
-    -текст сообщения
     -дата и время отправки сообщения
-    -клиент, которому отправлено сообщение
+    -статус отправки
+    -id клиента, которому отправлено сообщение
+    -id рассылки, которая отправила сообщение
     """
-    text = models.TextField(max_length=512)
+
     pub_date = models.DateTimeField()
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     mail_send = models.ForeignKey(MailSend, on_delete=models.CASCADE)
+
 
     SEND_STATUS_CHOICES = [
         ('S', 'Sent'),
@@ -68,4 +74,4 @@ class Message(models.Model):
     status = models.CharField(max_length=10, default='N', choices=SEND_STATUS_CHOICES)
 
     def __str__(self):
-        return f"#{self.id} Message {self.text} to {self.client}"
+        return f"#{self.id} Message from MailSend{self.mail_send} to {self.client}"
