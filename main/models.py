@@ -1,5 +1,7 @@
 from django.db import models
 
+import pytz
+
 
 class MailSend(models.Model):
     """
@@ -29,10 +31,12 @@ class Client(models.Model):
     -тег(произвольная метка)
     -часовой пояс
     """
-    phone = models.CharField(max_length=12)
+    phone = models.CharField(max_length=10)
     mobile_code = models.CharField(max_length=3)
     tag = models.CharField(max_length=100)
-    timezone = models.CharField(max_length=100, default='Europe/Moscow', blank=True)
+
+    TIMEZONE_CHOICES = zip(pytz.all_timezones, pytz.all_timezones)
+    timezone = models.CharField(max_length=255, default='UTC', blank=True, choices=TIMEZONE_CHOICES)
 
     def __str__(self):
         return f"#{self.id} Client {self.mobile_code} {self.phone}"
