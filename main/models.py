@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import RegexValidator
 import pytz
 
 
@@ -31,7 +31,9 @@ class Client(models.Model):
     -тег(произвольная метка)
     -часовой пояс
     """
-    phone = models.CharField(max_length=10)
+    phone_validator = RegexValidator(regex=r'^\d{10}$', message="Phone must be in format: '7XXXXXXXXXX'.")
+
+    phone = models.CharField(max_length=11, unique=True, validators=[phone_validator])
     mobile_code = models.CharField(max_length=3)
     tag = models.CharField(max_length=100)
 
@@ -54,6 +56,16 @@ class Message(models.Model):
     pub_date = models.DateTimeField()
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     mail_send = models.ForeignKey(MailSend, on_delete=models.CASCADE)
+
+    SEND_STATUS_CHOICES = [
+        ('S', 'Sent'),
+        ('F', 'Failed'),
+        ('D', 'Delivered'),
+        ('U', 'Undelivered'),
+        ('N', 'Not sent'),
+    ]
+
+    status = models.CharField(max_length=10, default='N', choices=SEND_STATUS_CHOICES)
 
     def __str__(self):
         return f"#{self.id} Message {self.text} to {self.client}"
