@@ -25,7 +25,7 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Message
-        fields = ['id', 'text', 'pub_date', 'client', 'mail_send']
+        fields = ['id', 'pub_date', 'client', 'mail_send']
 
 
 # ViewSets define the view behavior.

@@ -62,7 +62,6 @@ class Message(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     mail_send = models.ForeignKey(MailSend, on_delete=models.CASCADE)
 
-
     SEND_STATUS_CHOICES = [
         ('S', 'Sent'),
         ('F', 'Failed'),
