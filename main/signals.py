@@ -10,6 +10,7 @@ from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
 
+
 @receiver(post_save, sender=MailSend, dispatch_uid="create_message")
 def create_message(sender, instance, created, **kwargs):
     if created:
@@ -47,4 +48,3 @@ def create_message(sender, instance, created, **kwargs):
             else:
                 r = send_message.apply_async((data, client_id, mail_send_id),
                                              eta=mail_send.pub_start, expires=mail_send.pub_end)
-

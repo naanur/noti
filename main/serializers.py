@@ -13,10 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['url', 'username', 'email', 'is_staff']
 
 
-class MailSendSerializer(serializers.ModelSerializer):
+class MailSendSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="main:mailsend-detail")
+
     class Meta:
         model = MailSend
-        fields = "__all__"
+        fields = ['url', 'id', 'text', 'pub_start', 'pub_end']
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -29,4 +31,3 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = '__all__'
-
