@@ -15,13 +15,13 @@ TOKEN_API = os.getenv('TOKEN_API')
 
 
 @celery_app.task(bind=True, retry_backoff=True)
-def send_message(self, data, client_id, mailing_id, url=EXTERNAL_API_URL, token=TOKEN_API):
-    mail_send = MailSend.objects.get(pk=mailing_id)
+def send_message(self, data, client_id, mail_send_id, url=EXTERNAL_API_URL, token=TOKEN_API):
+    mail_send = MailSend.objects.get(pk=mail_send_id)
     client = Client.objects.get(pk=client_id)
     timezone = pytz.timezone(client.timezone)
     now = datetime.datetime.now(timezone)
 
-    if mail_send.time_start <= now.time() <= mail_send.time_end:
+    if mail_send.pub_start <= now.time() <= mail_send.pub_end:
         header = {
             'Authorization': f'Token {token}',
             'Content-Type': 'application/json'}
@@ -32,10 +32,10 @@ def send_message(self, data, client_id, mailing_id, url=EXTERNAL_API_URL, token=
             raise self.retry(exc=exc)
         else:
             logger.info(f"Message id: {data['id']}, Sending status: 'Sent'")
-            Message.objects.filter(pk=data['id']).update(sending_status='Sent')
+            Message.objects.filter(pk=data['id']).update(status='Sent')
     else:
         time = 24 - (int(now.time().strftime('%H:%M:%S')[:2]) -
-                     int(mail_send.time_start.strftime('%H:%M:%S')[:2]))
+                     int(mail_send.pub_start.strftime('%H:%M:%S')[:2]))
         time = 60 * 60 * time
         logger.info(f"Message id: {data['id']}, "
                     f"The current time is not suitable,"

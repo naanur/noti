@@ -70,7 +70,7 @@ class Message(models.Model):
         ('N', 'Not sent'),
     ]
 
-    status = models.CharField(max_length=10, default='N', choices=SEND_STATUS_CHOICES)
+    status = models.CharField(max_length=10, default='N', choices=SEND_STATUS_CHOICES, editable=False)
 
     def __str__(self):
         return f"#{self.id} Message from MailSend{self.mail_send} to {self.client}"
