@@ -23,17 +23,20 @@ pip install -r requirements.txt
 6. Создать, применить миграции в базу данных и запустить тесты:
 
 ```
-py manage.py makemigrations
-py manage.py migrate
-py manage.py test main
+python manage.py makemigrations
+python manage.py migrate
+python manage.py test main
 ```
 
 7. Запустить сервер
 
 ```
-py manage.py runserver
+python manage.py runserver
 ```
-
+8. Создать учетную записть администратора
+````
+python manage.py createsuperuser
+````
 9. Запустить celery
 
 ```
