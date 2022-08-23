@@ -26,7 +26,9 @@ def send_message(self, data, client_id, mail_send_id, url=EXTERNAL_API_URL, toke
             'Authorization': f'Token {token}',
             'Content-Type': 'application/json'}
         try:
-            requests.post(url=url + str(data['id']), headers=header, json=data)
+            r = requests.post(url=url + str(data['id']), headers=header, json=data)
+            logger.info(f"Сообщение для клиента {client} отправлено")
+            logger.info(r.text)
         except requests.exceptions.RequestException as exc:
             logger.error(f"Message if: {data['id']} is error")
             raise self.retry(exc=exc)

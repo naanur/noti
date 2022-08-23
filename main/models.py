@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import RegexValidator
 import pytz
+import datetime
+from django.utils import timezone
 
 
 class MailSend(models.Model):
@@ -12,14 +14,22 @@ class MailSend(models.Model):
     -фильтр свойств клиентов, на которых должна быть произведена рассылка (код мобильного оператора, тег)
     -дата и время окончания рассылки. никакие сообщения клиентам после этого времени доставляться не должны
     """
-    pub_start = models.DateTimeField()
-    pub_end = models.DateTimeField()
+    pub_start = models.DateTimeField(null=False, blank=False, verbose_name="Дата и время запуска рассылки")
+    pub_end = models.DateTimeField(null=False, blank=False, verbose_name="Дата и время окончания рассылки")
     text = models.TextField(max_length=512)
     mobile_code = models.CharField(max_length=3)
     client_tag = models.CharField(max_length=100)
 
     def __str__(self):
         return f"#{self.id} MailSend от {self.pub_start} до {self.pub_end}"
+
+    @property
+    def to_send(self):
+        now = timezone.now()
+        if self.pub_start <= now <= self.pub_end:
+            return True
+        else:
+            return False
 
 
 class Client(models.Model):
@@ -57,8 +67,8 @@ class Message(models.Model):
     -id клиента, которому отправлено сообщение
     -id рассылки, которая отправила сообщение
     """
-
-    pub_date = models.DateTimeField()
+    id = models.AutoField(primary_key=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     mail_send = models.ForeignKey(MailSend, on_delete=models.CASCADE)
 
@@ -70,7 +80,7 @@ class Message(models.Model):
         ('N', 'Not sent'),
     ]
 
-    status = models.CharField(max_length=10, default='N', choices=SEND_STATUS_CHOICES, editable=False)
+    status = models.CharField(max_length=10, default='N', choices=SEND_STATUS_CHOICES)
 
     def __str__(self):
         return f"#{self.id} Message from MailSend{self.mail_send} to {self.client}"

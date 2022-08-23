@@ -6,7 +6,7 @@ from .models import MailSend, Client, Message
 # Serializers define the API representation.
 
 class UserSerializer(serializers.ModelSerializer):
-    # url = serializers.HyperlinkedIdentityField(view_name="main:user-detail")
+    url = serializers.HyperlinkedIdentityField(view_name="main:user-detail")
 
     class Meta:
         model = User
@@ -14,24 +14,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class MailSendSerializer(serializers.ModelSerializer):
-    # url = serializers.HyperlinkedIdentityField(view_name="main:mailsend-detail")
-
     class Meta:
         model = MailSend
-        fields = ['id', 'pub_start', 'pub_end', 'text', 'mobile_code', 'client_tag']
+        fields = "__all__"
 
 
 class ClientSerializer(serializers.ModelSerializer):
-    # url = serializers.HyperlinkedIdentityField(view_name="main:client-detail")
-
     class Meta:
         model = Client
-        fields = ['id', 'phone', 'mobile_code', 'tag']
+        fields = "__all__"
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    # url = serializers.HyperlinkedIdentityField(view_name="main:message-detail")
-
     class Meta:
         model = Message
-        fields = ['id', 'pub_date', 'client', 'mail_send', 'url', 'status']
+        fields = '__all__'
+
